@@ -1,0 +1,11 @@
+#cloud-config
+ethernets:
+    enp5s0:
+      addresses:
+      - {{ ip }}/24 
+      gateway4: 10.54.58.1
+      nameservers:
+        addresses:
+        - 10.54.58.1
+version: 2
+

@@ -1,0 +1,20 @@
+#cloud-config
+
+hostname: foo
+fqdn: foo.tll.com
+manage_etc_hosts: true
+
+packages:
+  - openssh-server
+  - apparmor
+  - apparmor-utils 
+
+users:
+  - name: k8s-master
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCkxQOJbulHIb3o7nWj3xPmaR6HHp1r4riHIz41x+Bcg4hUhyUh9snPmYdQFa2CTGsXwJKXr5q9d+TrHany0sgFuSaDOAaHJjYiOM8INYmL74YoCXUF5zdTvvb9bLLKDqSGZbUMSBkJMZWaux5pvcGnn53h875epriWvs0HSk7XB1CWyE0jfEpCraXpGaWHhZ4DfMmvWYuBW968fE6z7KJCJmDOL/W5A38tG/ZQlQGwAputzFqsHdyXs66UzDbvf5k8k4tP2E9+6wN+88sImaJRKrfRKk1H8YXtduwVk9lJmmGtAYPuReLoEnFaMVv08ki+mI3xk73ctSkpIGVoLoashXNoX5P/sYTWcMU4McrlMyjXpL4oBTKwdNgkkzn1NFJHo/SwGwA2B95qn6DRuLnY3v3ltBXLkq8BBuEk06ZVOg9JAbhdtVDS26yeKICTgFwqcusv0MBi6oQXPhIhXzGh621dLZr9rHdlatdxUVhGIxtXnMPYDh915Ojz16ned+0= steve@pop-os
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    shell: /bin/bash
+
+runcmd:
+  - systemctl enable --now ssh

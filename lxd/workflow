@@ -1,0 +1,10 @@
+- download base image
+- set not to update
+- init the image to a template VM
+- set limits
+- resize disk
+- cloud-init configs of the VM
+  - user-data
+  - network-config
+- launch the instance
+- publish the instance

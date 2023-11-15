@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    ip: "{{ ipaddr }}"
+    hostname: "{{ hostname }}"
+  tasks:
+    - template:
+        src: netconf.yaml.j2
+        dest: "{{ netconf_file }}"  
+    - template:
+        src: userconf.yaml.j2
+        dest: "{{ userconf_file }}"
+      
+

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Download the base image
+  echo "Downloading Ubuntu ..."
+  lxc image copy images:ubuntu/23.10/cloud --vm local: --alias=ubuntu
+
+  #echo "Downloading Centos ..."
+  #lxc image copy images:centos/9-Stream/cloud --vm local: --alias=centos
+
+  lxc query /1.0/instances/ub-ctrd
+  if [ "$?" -ne 0 ];then
+    #Init VM template
+    echo "Init ubuntu + ctrd + kubetools ..."
+    lxc launch ubuntu ub-ctrd --config=user.user-data="$(cat ./config-ubuntu-tpl.yml)"
+    while ! lxc exec ub-ctrd -- true;do
+      sleep 5
+    done
+    lxc exec ub-ctrd -- cloud-init status --wait
+    lxc stop ub-ctrd --timeout 5
+    echo " ... setting limits"
+    lxc config set ub-ctrd limits.cpu=1
+    lxc config set ub-ctrd limits.memory=1GB
+  fi
+  
+  lxc start ub-ctrd
+  while ! lxc exec ub-ctrd -- true;do
+      sleep 5
+  done
+
+  tar cf - scripts/ | lxc exec ub-ctrd -- tar Cxvf /opt -
+  lxc exec ub-ctrd -- /opt/scripts/setup_cri.sh containerd
+  lxc exec ub-ctrd -- /opt/scripts/prereq.sh
+  lxc exec ub-ctrd -- /opt/scripts/kubetools.sh
+
+  lxc stop ub-ctrd --timeout 5
+  lxc publish ub-ctrd local: --alias uv1
+    

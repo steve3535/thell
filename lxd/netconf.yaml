@@ -1,0 +1,11 @@
+#cloud-config
+ethernets:
+    eth0:
+      addresses:
+      - 10.54.58.151/24
+      gateway4: 10.54.58.1
+      nameservers:
+        addresses:
+        - 10.54.58.1
+version: 2
+
