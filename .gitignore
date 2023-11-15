@@ -2,4 +2,6 @@ env/
 key*
 *.tar.gz
 *.log
+certs/
+*.pem
 

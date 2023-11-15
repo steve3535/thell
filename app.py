@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_mail import Mail,Message
-import random,subprocess  
+import random,subprocess,re
+
 PUBLIC_IP="94.252.100.127"
 app = Flask(__name__)
 app.secret_key = '123456'  # Needed for flashing messages
@@ -13,6 +14,10 @@ app.config['MAIL_USERNAME'] = 'steve@thelinuxlabs.com'
 app.config['MAIL_PASSWORD'] = 'wgwt yofk ywoj uhwb'
 app.config['MAIL_DEFAULT_SENDER'] = 'steve@thelinuxlabs.com'
 mail = Mail(app)
+
+# Regular expression for validating an Email
+email_regex = r'^\w+[\w.-]*@\w+[\w.-]+\.\w+$'
+
 
 def gencreds():
     charset="abcdef0123456"
@@ -27,6 +32,12 @@ def submit_email():
     email = request.form['email']
     # Process the email, e.g., save it to a database
     # print("Received email:", email)
+
+    # Validate email format
+    if not re.match(email_regex, email):
+        flash("Invalid email format")
+        return redirect(url_for('index'))
+
     try:
         cmd_output=subprocess.run(['ssh',f'ubuntu@{PUBLIC_IP}','sudo','useradd','-m',email,'-s','/bin/bash'],text=True,capture_output=True)
         print(cmd_output)
@@ -43,4 +54,5 @@ def submit_email():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True,host="0.0.0.0")
+    app.run(debug=True,host="0.0.0.0",ssl_context=('fullchain.pem','privkey.pem'))
+
